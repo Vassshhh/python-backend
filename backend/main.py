@@ -22,8 +22,9 @@ app.secret_key = 'your_secret_key'
 # Initialize the text-to-speech engine
 engine = pyttsx3.init()
 
-# Set your OpenAI API key from .env file
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# Set your OpenAI API key from the environment variable
+API_KEY = os.getenv("OPENAI_API_KEY")  # Fetch API key from .env
+openai.api_key = API_KEY
 
 ASSISTANT_ID = "asst_QIz5kji53tTMES43YeZu58pk"  # Replace with your actual assistant ID
 
@@ -89,8 +90,8 @@ def chatbot():
         if not user_input:
             return jsonify({"error": "No message provided"}), 400
 
-        # Generate a general response from OpenAI (using the new API syntax)
-        general_response = openai.chat_completions.create(
+        # Generate a general response from OpenAI (correct method usage)
+        general_response = openai.ChatCompletion.create(
             model="gpt-4",
             messages=[
                 {"role": "system", "content": "Kamu adalah asisten muslim yang menjawab pertanyaan di awali dengan Bismillahirrahmanirrahim."},
@@ -130,8 +131,7 @@ def chatbot():
         })
 
     except Exception as e:
-        # Log the error and return an error message with the exception details
-        app.logger.error(f"An error occurred: {str(e)}")
+        # Return an error message with the exception details
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 # Hadith endpoint (Optional: can be used for fetching top hadiths separately)
