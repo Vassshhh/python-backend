@@ -1,0 +1,5 @@
+openai
+pyttsx3
+flask
+flask_cors
+dotenv
