@@ -1,3 +1,4 @@
+import logging
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
 import openai
@@ -24,7 +25,7 @@ engine = pyttsx3.init()
 
 # Set your OpenAI API key from the environment variable
 API_KEY = os.getenv("OPENAI_API_KEY")  # Fetch API key from .env
-openai.api_key = "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"
+openai.api_key = API_KEY
 
 ASSISTANT_ID = "asst_QIz5kji53tTMES43YeZu58pk"  # Replace with your actual assistant ID
 
@@ -32,6 +33,10 @@ ASSISTANT_ID = "asst_QIz5kji53tTMES43YeZu58pk"  # Replace with your actual assis
 last_interaction_time = time.time()  # Track the time of last user interaction
 inactivity_delay = 90  # Set the inactivity delay to 90 seconds (1.5 minutes)
 inactivity_message = "Wa'alaikumussalam Warahmatullahi Wabarakatuh"
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 # Function to check inactivity and send the inactivity message
 def inactivity_check():
@@ -81,6 +86,7 @@ def chatbot():
         # Get the request data
         data = request.json
         if not data:
+            logger.error("No JSON data provided")
             return jsonify({"error": "No JSON data provided"}), 400
         
         user_input = data.get('message')
@@ -88,7 +94,11 @@ def chatbot():
         need_hadith = data.get('need_hadith', False)
 
         if not user_input:
+            logger.error("No message provided in the request")
             return jsonify({"error": "No message provided"}), 400
+
+        # Log the received user input
+        logger.info(f"Received user input: {user_input}")
 
         # Generate a general response from OpenAI (correct method usage)
         general_response = openai.ChatCompletion.create(
@@ -102,15 +112,23 @@ def chatbot():
 
         # Ensure 'choices' exist in the response
         if 'choices' not in general_response or len(general_response['choices']) == 0:
+            logger.error("No valid response from OpenAI API")
             return jsonify({"error": "No valid response from AI"}), 500
 
         response_message = general_response['choices'][0]['message']['content'].strip()
+
+        # Log the generated response
+        logger.info(f"Generated response: {response_message}")
 
         # Determine if the response should include a Hadith
         if need_hadith:
             hadith_content = "The Prophet Muhammad (peace be upon him) said: 'The best of you are those who have the best manners and character.' (Sahih Bukhari)"
             response_message += f"\n\nRelated Hadith: {hadith_content}"
-        
+
+        # Log the final message with Hadith if added
+        if need_hadith:
+            logger.info(f"Response with Hadith: {response_message}")
+
         # Text-to-Speech (TTS) if requested
         if use_tts:
             speak_message(response_message)
@@ -131,7 +149,8 @@ def chatbot():
         })
 
     except Exception as e:
-        # Return an error message with the exception details
+        # Log the error and return a response with the exception details
+        logger.error(f"An error occurred: {str(e)}")
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 # Hadith endpoint (Optional: can be used for fetching top hadiths separately)
