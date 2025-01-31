@@ -25,6 +25,7 @@ engine = pyttsx3.init()
 
 API_KEY = os.getenv('OPENAI_API_KEY')  # Ensure your API_KEY is loaded properly
 # Set your OpenAI API key from the environment variable
+            logger.error(API_KEY)
 openai.api_key = API_KEY
 
 ASSISTANT_ID = "asst_QIz5kji53tTMES43YeZu58pk"  # Replace with your actual assistant ID
