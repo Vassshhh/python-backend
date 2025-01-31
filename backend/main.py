@@ -23,8 +23,9 @@ app.secret_key = 'your_secret_key'
 # Initialize the text-to-speech engine
 engine = pyttsx3.init()
 
+API_KEY = os.getenv('OPENAI_API_KEY')  # Ensure your API_KEY is loaded properly
 # Set your OpenAI API key from the environment variable
-openai.api_key = "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"
+openai.api_key = API_KEY
 
 ASSISTANT_ID = "asst_QIz5kji53tTMES43YeZu58pk"  # Replace with your actual assistant ID
 
