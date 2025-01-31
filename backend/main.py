@@ -101,7 +101,7 @@ def chatbot():
         logger.info(f"Received user input: {user_input}")
 
         # Generate a general response from OpenAI (correct method usage)
-        general_response = openai.ChatCompletion.create(
+        general_response = openai.Completion.create(
             model="gpt-4",
             messages=[
                 {"role": "system", "content": "Kamu adalah asisten muslim yang menjawab pertanyaan di awali dengan Bismillahirrahmanirrahim."},
