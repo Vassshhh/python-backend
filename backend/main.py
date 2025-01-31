@@ -66,7 +66,7 @@ inactivity_timer_thread.daemon = True  # This will allow the thread to exit when
 inactivity_timer_thread.start()
 
 # Chat endpoint with session for history
-@app.route("/chatbot", methods=["POST"])
+@app.route("/chatbot", methods=["GET"])
 def chatbot():
     try:
         global last_interaction_time
